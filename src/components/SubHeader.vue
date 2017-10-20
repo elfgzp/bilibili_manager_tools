@@ -1,17 +1,14 @@
 <template>
-  <div>
     <mt-header class="sub-header" fixed v-bind:title="headerTitle">
-      <router-link to="/" slot="left">
-        <mt-button icon="back">返回</mt-button>
-      </router-link>
+      <mt-button icon="back" slot="left" @click.native="handleBack">返回</mt-button>
     </mt-header>
-  </div>
 </template>
 
 <script>
   import {Button, Header} from 'mint-ui'
 
   export default {
+    props: ['headerTitle'],
     components: {
       'mt-button': Button,
       'mt-header': Header
@@ -19,7 +16,11 @@
     name: 'SubHeader',
     data() {
       return {
-        headerTitle: ''
+      }
+    },
+    methods: {
+      handleBack: function (event) {
+        this.$router.go(-1)
       }
     }
   }

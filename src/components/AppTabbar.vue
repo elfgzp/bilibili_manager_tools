@@ -1,6 +1,5 @@
 <template>
-  <div>
-    <mt-tabbar class="mt-tabbar" v-model="selected">
+    <mt-tabbar fixed class="mt-tabbar" v-model="selected">
       <mt-tab-item id="settingTab">
         <img slot="icon" src="../assets/imgs/setting.svg">
         设置
@@ -20,7 +19,6 @@
         关于
       </mt-tab-item>
     </mt-tabbar>
-  </div>
 </template>
 
 <script>

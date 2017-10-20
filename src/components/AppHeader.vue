@@ -1,5 +1,4 @@
 <template>
-  <div>
     <mt-header class="mt-header" fixed title="Bilibili房管工具">
       <div slot="left">
             <img class="header-icon-left" slot="icon" src="../assets/imgs/bilibili-header-left.svg">
@@ -8,7 +7,6 @@
             <img class="header-icon-right" slot="icon" src="../assets/imgs/bilibili-header-right.svg">
       </div>
     </mt-header>
-  </div>
 </template>
 
 <script>

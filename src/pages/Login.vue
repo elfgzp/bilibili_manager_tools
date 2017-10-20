@@ -1,7 +1,6 @@
 <template>
-  <div>
-    <p>登录</p>
-    <sub-header></sub-header>
+  <div class="login-contain">
+    <sub-header headerTitle="用户登录"></sub-header>
   </div>
 </template>
 
@@ -14,11 +13,14 @@
     },
     name: 'Login',
     data() {
-      return {}
+      return {
+      }
     }
   }
 </script>
 
 <style scoped>
-
+.login-contain {
+  height: 100%;
+}
 </style>

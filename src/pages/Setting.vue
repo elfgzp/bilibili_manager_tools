@@ -1,7 +1,8 @@
 <template>
-  <div>
-    <p>设置页面</p>
-    <mt-button type="default" size="large" @click.native="handleLogin">default</mt-button>
+  <div class="setting-contain">
+    <div class="setting-button-group">
+      <mt-button class="login-button" size="large" @click.native="handleLogin">用户登录</mt-button>
+    </div>
   </div>
 </template>
 
@@ -18,15 +19,33 @@
     },
     methods: {
       handleLogin: function (event) {
-        alert(event)
+        this.$router.push('/Login')
       }
     }
   }
 </script>
 
 <style scoped>
-  .mint-header{
+  .mint-header {
     background-color: #fb7299
   }
 
+  .setting-contain {
+    height: 100%;
+    position: relative;
+  }
+
+  .setting-button-group {
+    width: 100%;
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .login-button {
+    border: 1px solid #fb7299;
+    background-color: transparent;
+    color: #fb7299;
+  }
 </style>
