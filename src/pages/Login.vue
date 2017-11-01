@@ -1,6 +1,7 @@
 <template>
   <div class="login-contain">
     <sub-header headerTitle="用户登录"></sub-header>
+    <iframe src="http://passport.bilibili.com/ajax/miniLogin/minilogin"></iframe>
   </div>
 </template>
 
@@ -21,6 +22,10 @@
 
 <style scoped>
 .login-contain {
+  height: 100%;
+}
+iframe {
+  width: 100%;
   height: 100%;
 }
 </style>

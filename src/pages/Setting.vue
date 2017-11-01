@@ -1,7 +1,8 @@
 <template>
   <div class="setting-contain">
     <div class="setting-button-group">
-      <mt-button class="login-button" size="large" @click.native="handleLogin">用户登录</mt-button>
+      <mt-button class="setting-button" size="large" @click.native="handleLogin">用户登录</mt-button>
+      <mt-button class="setting-button" size="large" @click.native="handleBaseSetting">基础设置</mt-button>
     </div>
   </div>
 </template>
@@ -20,6 +21,9 @@
     methods: {
       handleLogin: function (event) {
         this.$router.push('/Login')
+      },
+      handleBaseSetting: function (event) {
+        this.$router.push('/BaseSetting')
       }
     }
   }
@@ -38,12 +42,14 @@
   .setting-button-group {
     width: 100%;
     position: absolute;
-    top: 40%;
+    top: 35%;
     left: 50%;
     transform: translate(-50%, -50%);
   }
 
-  .login-button {
+  .setting-button {
+    margin-top: 10px;
+    margin-bottom: 10px;
     border: 1px solid #fb7299;
     background-color: transparent;
     color: #fb7299;
