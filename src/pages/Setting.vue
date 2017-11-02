@@ -1,8 +1,8 @@
 <template>
   <div class="setting-contain">
     <div class="setting-button-group">
-      <mt-button class="setting-button" size="large" @click.native="handleLogin">用户登录</mt-button>
-      <mt-button class="setting-button" size="large" @click.native="handleBaseSetting">基础设置</mt-button>
+      <mt-button class="setting-button" size="large" @click.native="navigaLogin">用户登录</mt-button>
+      <mt-button class="setting-button" size="large" @click.native="navigaBaseSetting">基础设置</mt-button>
     </div>
   </div>
 </template>
@@ -19,10 +19,10 @@
       return {}
     },
     methods: {
-      handleLogin: function (event) {
+      navigaLogin: function (event) {
         this.$router.push('/Login')
       },
-      handleBaseSetting: function (event) {
+      navigaBaseSetting: function (event) {
         this.$router.push('/BaseSetting')
       }
     }
