@@ -26,14 +26,23 @@
     computed: {
       roomId: {
         get () {
+          return this.$store.state.roomId
         },
         set (val) {
+          this.$store.dispatch({
+            type: 'UPDATE_ROOMID',
+            roomId: val
+          })
         }
       }
     },
     methods: {
       startDanmakuService() {
-      }
+        if (!this.roomId) return
+        this.$store.dispatch({
+          type: 'START_DANMAKU_SERVICE'
+        })
+      },
     }
   }
 </script>
