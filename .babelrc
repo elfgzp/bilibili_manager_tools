@@ -1,11 +1,19 @@
 {
+  "compact": true,
   "presets": [
-    ["stage-3"]
+    ["es2015", { "modules": false }],
+    "stage-2",
+    "stage-3",
+    "es2017-node7"
   ],
-  "plugins": [["component", [
+  "sourceMaps": true,
+  "retainLines": true,
+  "plugins": ["transform-runtime", ["component", [
     {
       "libraryName": "mint-ui",
       "style": true
     }
-  ]]]
+  ]]],
+    "ignore": []
+
 }
