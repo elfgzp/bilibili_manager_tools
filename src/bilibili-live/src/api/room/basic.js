@@ -1,6 +1,6 @@
-const LIVE_BASE_URL = 'localhost:2333/livebilibilicom'
-const API_BASE_URL = 'localhost:2333/apibilibilicom'
-const API_LIVE_BASE_URL = 'localhost:2333/apilivebilibilicom'
+const LIVE_BASE_URL = '/livebilibilicom'
+const API_BASE_URL = '/apibilibilicom'
+const API_LIVE_BASE_URL = '/apilivebilibilicom'
 
 // 获取直播间原始ID
 export function getRoomBaseInfo (roomUrl) {

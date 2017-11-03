@@ -53,8 +53,8 @@
             position: 'bottom',
           });
         }
-        let email_reg = /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/;
-        if (!email_reg.test(this.email)) {
+        let emailReg = /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/
+        if (!emailReg.test(this.email)) {
           return Toast({
             message: '邮箱格式不正确',
             position: 'bottom',

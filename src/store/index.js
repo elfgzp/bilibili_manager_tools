@@ -6,14 +6,15 @@ import Live from '../bilibili-live/src/index.js'
 Vue.use(VueLocalStorage)
 Vue.use(Vuex)
 
-let userConfigStore = Vue.localStorage
+let localStorage = Vue.localStorage
+let blockList = []
 let roomId = ''
 let cookie = ''
 const RECONNECT_DELAY = 3e3
 let restartService = null
 
 
-// let userConfig = userConfigStore.get()
+let userConfig = JSON.parse(localStorage.get('localConfig') || '{}')
 let config = {
   onlineMessage: false,
   fansMessage: false,
@@ -54,6 +55,34 @@ let danmakuConfig = {
   mode: 'scroll',
   color: 'white'
 }
+
+if (userConfig) {
+  roomId = userConfig.roomId || ''
+  cookie = userConfig.cookie || ''
+  blockList = userConfig.blockList || []
+  if (userConfig.config) {
+    Object.keys(config).forEach((key) => {
+      if (userConfig.config.hasOwnProperty(key)) {
+        config[key] = userConfig.config[key]
+      }
+    })
+  }
+  if (userConfig.ttsConfig) {
+    Object.keys(ttsConfig).forEach((key) => {
+      if (userConfig.ttsConfig.hasOwnProperty(key)) {
+        ttsConfig[key] = userConfig.ttsConfig[key]
+      }
+    })
+  }
+  if (userConfig.danmakuConfig) {
+    Object.keys(danmakuConfig).forEach((key) => {
+      if (userConfig.danmakuConfig.hasOwnProperty(key)) {
+        danmakuConfig[key] = userConfig.danmakuConfig[key]
+      }
+    })
+  }
+}
+
 export default new Vuex.Store({
 
   namespaced: true,
@@ -196,27 +225,27 @@ export default new Vuex.Store({
   actions: {
     'UPDATE_ROOMID'({commit, getters}, roomId) {
       commit('SET_ROOM_ID', roomId)
-      // userConfigStore.set(getters.localData)
+      localStorage.set('localConfig', JSON.stringify(getters.localData))
     },
     'UPDATE_COOKIE'({commit, getters}, cookie) {
       commit('SET_USER_COOKIE', cookie)
-      // userConfigStore.set(getters.localData)
+      localStorage.set('localConfig', JSON.stringify(getters.localData))
     },
     'UPDATE_CONFIG'({commit, getters}, config) {
       commit('SET_CONFIG', config)
-      // userConfigStore.set(getters.localData)
+      localStorage.set('localConfig', JSON.stringify(getters.localData))
     },
     'UPDATE_TTS_CONFIG'({commit, getters}, config) {
       commit('SET_TTS_CONFIG', config)
-      // userConfigStore.set(getters.localData)
+      localStorage.set('localConfig', JSON.stringify(getters.localData))
     },
     'UPDATE_DANMAKU_MODE'({commit, getters}, mode) {
       commit('SET_DANMAKU_MODE', mode)
-      // userConfigStore.set(getters.localData)
+      localStorage.set('localConfig', JSON.stringify(getters.localData))
     },
     'UPDATE_DANMAKU_COLOR'({commit, getters}, color) {
       commit('SET_DANMAKU_COLOR', color)
-      // userConfigStore.set(getters.localData)
+      localStorage.set('localConfig', JSON.stringify(getters.localData))
     },
     'START_DANMAKU_SERVICE'({state, commit, dispatch}) {
       clearTimeout(restartService)
@@ -225,9 +254,9 @@ export default new Vuex.Store({
       })
       new Live.Room({
         url: state.roomId,
-        // useWebsocket: state.config.useWebsocket,
-        // useWSS: state.config.useHttps,
-        // useGiftBundle: state.config.useGiftEnd
+        useWebsocket: state.config.useWebsocket,
+        useWSS: state.config.useHttps,
+        useGiftBundle: state.config.useGiftEnd
       }).connect().then(room => {
         if (state.danmakuService) {
           state.danmakuService.disconnect()
@@ -251,12 +280,10 @@ export default new Vuex.Store({
             })
           })
           .on('danmaku.close', () => {
+            console.log('弹幕服务已关闭')
             commit('SET_DANMAKU_SERVICE_STATUS', {
-              status: 'error'
+              status: 'close'
             })
-            restartService = setTimeout(() => {
-              dispatch('START_DANMAKU_SERVICE')
-            }, RECONNECT_DELAY)
           })
           .on('danmaku.error', () => {
             commit('SET_DANMAKU_SERVICE_STATUS', {
@@ -318,6 +345,26 @@ export default new Vuex.Store({
           danmakuService: room
         })
       })
+    },
+    'STOP_DANMAKU_SERVICE'({state, commit, dispatch}) {
+      commit('SET_DANMAKU_SERVICE_STATUS', {
+        status: 'close'
+      })
+      if (state.danmakuService) {
+        state.danmakuService.disconnect()
+        commit('SET_ONLINE_NUMBER', {
+          number: '--'
+        })
+        commit('SET_FANS_NUMBER', {
+          number: '--'
+        })
+        commit('CLEAR_ALL_POOL')
+        commit('SET_DANMAKU_SERVICE', {
+          danmakuService: null
+        })
+
+      }
+
     },
     'START_USER_SERVICE'({state, commit, dispatch}) {
       new User({

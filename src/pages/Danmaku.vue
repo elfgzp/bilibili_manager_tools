@@ -1,156 +1,63 @@
 <template>
-  <div>
-    <div class="danmaku-contain">
-      <!--<mt-cell-swipe v-for="n in 30" :key="n"-->
-      <!--v-bind:title="n"-->
-      <!--:right="[-->
-      <!--{-->
-      <!--content: '禁言',-->
-      <!--style: { background: '#fb7299', color: '#fff' },-->
-      <!--handler: function() {-->
-      <!--return this.$messagebox('delete')-->
-      <!--}-->
-      <!--}-->
-      <!--]"></mt-cell-swipe>-->
-      <mt-cell-swipe v-bind:right="[
-    {
-      content: '禁言',
-      style: { background: '#fb7299', color: '#fff' },
-      handler: function() {
-        return this.$messagebox('delete')
-      }
-    }
-  ]">
+  <div class="danmaku-contain-parent" ref="danmakuContainParent">
+    <div class="danmaku-contain" ref="danmakuContain">
+      <mt-cell-swipe v-for="(danmaku, index) in danmakuPool" v-bind:right="renderBlockButton(danmaku)">
 
         <div class="danmaku-box">
-          <!-- <span class="guard-user" :class="userGuardLevel(danmaku.user.guard)"></span> -->
-          <span class="admin-user">管</span>
-          <span class="svip-user">爷</span>
-          <span class="vip-user">爷</span>
-          <span class="user-badge user-badge-level-5"><span class="user-badge-title">熊の</span><span
-            class="user-badge-level">17</span></span>
-          <!-- <span class="user-title"><img :src="titleImage(danmaku.user.title.source)"></span> -->
-          <span class="user-level user-level-5">UL41</span>
-          <span class="user-name">神奇海螺良良:</span>
-          <span class="user-comment">测试测试测试测试测试测试测试测试测试测试测试测试</span>
+          <div v-if="danmaku.type == 'connected'" class="msg-connected">弹幕服务器连接成功...</div>
+          <div v-else-if="danmaku.type == 'error'" class="msg-error">连接发生错误，3秒后自动重连...</div>
+          <div v-else-if="danmaku.type == 'live'" class="msg-live">开始直播啦！</div>
+          <div v-else-if="danmaku.type == 'preparing'" class="msg-preparing">直播已结束，下次再见！</div>
+          <div v-else-if="danmaku.type == 'welcome'" class="msg-welcome">
+            <span v-if="danmaku.user.isVIP" class="vip-user">爷</span>
+            <span v-if="danmaku.user.isSVIP" class="svip-user">爷</span>
+            <span class="user-name">{{ danmaku.user.name }}</span>
+            <span class="welcome-message">进入直播间</span>
+          </div>
+          <div v-else-if="danmaku.type == 'welcomeGuard'" class="msg-welcome-guard">
+            <span v-if="danmaku.user.guard > 0" class="guard-user" :class="userGuardLevel(danmaku.user.guard)"></span>
+            <span class="user-name">{{ danmaku.user.name }}</span>
+            <span class="welcome-message">进入直播间</span>
+          </div>
+          <div v-else-if="danmaku.type == 'comment'" class="msg-comment"
+          >
+            <span v-if="danmaku.user.guard > 0" class="guard-user" :class="userGuardLevel(danmaku.user.guard)"></span>
+            <span v-if="danmaku.user.isAdmin" class="admin-user">管</span>
+            <span v-if="danmaku.user.isSVIP" class="svip-user">爷</span>
+            <span v-else-if="danmaku.user.isVIP" class="vip-user">爷</span>
+            <span v-if="danmaku.user.badge" class="user-badge"
+                  :class="userBadgeLevelColor(danmaku.user.badge.level)"><span
+              class="user-badge-title">{{ danmaku.user.badge.title }}</span><span
+              class="user-badge-level">{{ danmaku.user.badge.level }}</span></span>
+            <span v-if="danmaku.user.title && danmaku.user.title.source" class="user-title"><img
+              :src="titleImage(danmaku.user.title.source)"></span>
+            <span v-if="danmaku.user.level" class="user-level"
+                  :class="userLevelColor(danmaku.user.level)">{{ "UL " + danmaku.user.level }}</span>
+            <span class="user-name">{{ danmaku.user.name }}:</span>
+            <span class="user-comment">{{ danmaku.comment }}</span>
+          </div>
+          <div v-else-if="danmaku.type == 'gift'" class="msg-gift">
+            <span class="user-name">{{ danmaku.user.name }}</span>
+            <span class="gift-action">赠送</span>
+            <span class="gift-img"><img :src="giftImage(danmaku.gift.id)"></span>
+            <span class="user-gift">{{ `${danmaku.gift.name} × ${danmaku.gift.count}` }}</span>
+          </div>
+          <div v-else-if="danmaku.type == 'guardBuy'" class="msg-guard-buy">
+            <span class="user-name">{{ danmaku.user.name }}</span>
+            <span class="buy-msg">购买</span>
+            <span class="guard-user-gift" :class="userGuardLevel(danmaku.level)"></span>
+            <span class="buy-count">{{ `× ${danmaku.count}` }}</span>
+          </div>
+          <div v-else-if="danmaku.type == 'block'" class="msg-block">
+            <span class="user-name">{{ danmaku.user.name }}</span>
+            <span class="block-msg">被管理员禁言</span>
+          </div>
+          <div v-else-if="danmaku.type == 'newFans'" class="msg-new-fans">
+            <span class="user-name">{{ danmaku.user.name }}</span>
+            <span class="follow-msg">关注了直播间</span>
+          </div>
         </div>
       </mt-cell-swipe>
-      <mt-cell-swipe v-bind:right="[
-    {
-      content: '禁言',
-      style: { background: '#fb7299', color: '#fff' },
-      handler: function() {
-        return this.$messagebox('delete')
-      }
-    }
-  ]">
-
-        <div class="danmaku-box">
-          <!-- <span class="guard-user" :class="userGuardLevel(danmaku.user.guard)"></span> -->
-          <span class="admin-user">管</span>
-          <span class="svip-user">爷</span>
-          <span class="vip-user">爷</span>
-          <span class="user-badge user-badge-level-5"><span class="user-badge-title">熊の</span><span
-            class="user-badge-level">17</span></span>
-          <!-- <span class="user-title"><img :src="titleImage(danmaku.user.title.source)"></span> -->
-          <span class="user-level user-level-5">UL41</span>
-          <span class="user-name">神奇海螺良良:</span>
-          <span class="user-comment">测试测试测试测试测试测试测试测试测试测试测试测试</span>
-        </div>
-      </mt-cell-swipe>
-      <mt-cell-swipe v-bind:right="[
-    {
-      content: '禁言',
-      style: { background: '#fb7299', color: '#fff' },
-      handler: function() {
-        return this.$messagebox('delete')
-      }
-    }
-  ]">
-
-        <div class="danmaku-box">
-          <!-- <span class="guard-user" :class="userGuardLevel(danmaku.user.guard)"></span> -->
-          <span class="admin-user">管</span>
-          <span class="svip-user">爷</span>
-          <span class="vip-user">爷</span>
-          <span class="user-badge user-badge-level-5"><span class="user-badge-title">熊の</span><span
-            class="user-badge-level">17</span></span>
-          <!-- <span class="user-title"><img :src="titleImage(danmaku.user.title.source)"></span> -->
-          <span class="user-level user-level-5">UL41</span>
-          <span class="user-name">神奇海螺良良:</span>
-          <span class="user-comment">测试测试测试测试测试测试测试测试测试测试测试测试</span>
-        </div>
-      </mt-cell-swipe>
-      <mt-cell-swipe v-bind:right="[
-    {
-      content: '禁言',
-      style: { background: '#fb7299', color: '#fff' },
-      handler: function() {
-        return this.$messagebox('delete')
-      }
-    }
-  ]">
-
-        <div class="danmaku-box">
-          <!-- <span class="guard-user" :class="userGuardLevel(danmaku.user.guard)"></span> -->
-          <span class="admin-user">管</span>
-          <span class="svip-user">爷</span>
-          <span class="vip-user">爷</span>
-          <span class="user-badge user-badge-level-5"><span class="user-badge-title">熊の</span><span
-            class="user-badge-level">17</span></span>
-          <!-- <span class="user-title"><img :src="titleImage(danmaku.user.title.source)"></span> -->
-          <span class="user-level user-level-5">UL41</span>
-          <span class="user-name">神奇海螺良良:</span>
-          <span class="user-comment">测试测试测试测试测试测试测试测试测试测试测试测试</span>
-        </div>
-      </mt-cell-swipe>
-      <mt-cell-swipe v-bind:right="[
-    {
-      content: '禁言',
-      style: { background: '#fb7299', color: '#fff' },
-      handler: function() {
-        return this.$messagebox('delete')
-      }
-    }
-  ]">
-
-        <div class="danmaku-box">
-          <!-- <span class="guard-user" :class="userGuardLevel(danmaku.user.guard)"></span> -->
-          <span class="admin-user">管</span>
-          <span class="svip-user">爷</span>
-          <span class="vip-user">爷</span>
-          <span class="user-badge user-badge-level-5"><span class="user-badge-title">熊の</span><span
-            class="user-badge-level">17</span></span>
-          <!-- <span class="user-title"><img :src="titleImage(danmaku.user.title.source)"></span> -->
-          <span class="user-level user-level-5">UL41</span>
-          <span class="user-name">神奇海螺良良:</span>
-          <span class="user-comment">测试测试测试测试测试测试测试测试测试测试测试测试</span>
-        </div>
-      </mt-cell-swipe>
-      <mt-cell-swipe v-bind:right="[
-    {
-      content: '禁言',
-      style: { background: '#fb7299', color: '#fff' },
-      handler: function() {
-        return this.$messagebox('delete')
-      }
-    }
-  ]">
-
-        <div class="danmaku-box">
-          <!-- <span class="guard-user" :class="userGuardLevel(danmaku.user.guard)"></span> -->
-          <span class="admin-user">管</span>
-          <span class="svip-user">爷</span>
-          <span class="vip-user">爷</span>
-          <span class="user-badge user-badge-level-5"><span class="user-badge-title">熊の</span><span
-            class="user-badge-level">17</span></span>
-          <!-- <span class="user-title"><img :src="titleImage(danmaku.user.title.source)"></span> -->
-          <span class="user-level user-level-5">UL41</span>
-          <span class="user-name">神奇海螺良良:</span>
-          <span class="user-comment">测试测试测试测试测试测试测试测试测试测试测试测试</span>
-        </div>
-      </mt-cell-swipe>
-
     </div>
     <div class="danmaku-sender">
       <mt-field>
@@ -173,8 +80,171 @@
     },
     name: 'Danmaku',
     data() {
-      return {}
+      return {
+        config: {
+          welcomeMessage: true,
+          welcomeGuardMessage: true,
+          commentMessage: true,
+          giftMessage: true,
+          guardBuyMessage: true,
+          newFansMessage: true,
+          blockMessage: true,
+          useBlock: true,
+          useAdmin: false,
+          lockDanmakuList: false
+        },
+        inDanmakuList: false,
+        hoverIndex: -1,
+        danmakuContent: ''
+      }
+    },
+    computed: {
+      danmakuPool() {
+        return this.$store.state.danmakuPool.filter(msg => {
+          return this.config[msg.type + 'Message']
+        })
+      },
+      userService() {
+        return this.$store.state.userService
+      },
+      danmakuService() {
+        return this.$store.state.danmakuService
+      },
+      danmakuMode: {
+        get () {
+          return this.$store.state.danmakuConfig.mode
+        },
+        set (val) {
+          this.$store.dispatch({
+            type: 'UPDATE_DANMAKU_MODE',
+            mode: val
+          })
+        }
+      },
+      danmakuColor: {
+        get () {
+          return this.$store.state.danmakuConfig.color
+        },
+        set (val) {
+          this.$store.dispatch({
+            type: 'UPDATE_DANMAKU_COLOR',
+            color: val
+          })
+        }
+      }
+    },
+    watch: {
+      danmakuPool() {
+        var self = this;
+        this.$nextTick(() => {
+          self.$refs.danmakuContainParent.scrollTop = self.$refs.danmakuContainParent.scrollHeight
+        })
+
+      }
+    },
+    methods: {
+      userLevelColor(level) {
+        return "user-level-" + Math.ceil(Number(level) / 10)
+      },
+      userBadgeLevelColor(level) {
+        return "user-badge-level-" + Math.ceil(Number(level) / 4)
+      },
+      userGuardLevel(level) {
+        return "guard-user-" + level
+      },
+      giftImage(id) {
+        return `http://s1.hdslb.com/bfs/static/blive/blfe-live-room/static/img/gift-images/image-gif-grey/gift-grey-${id}.gif`
+      },
+      titleImage(source) {
+        let uri = source.replace('title-', 'title/')
+        return `http://s1.hdslb.com/bfs/static/blive/live-assets/${uri}.png`
+      },
+      enterDanmakuList() {
+        this.inDanmakuList = true
+      },
+      leaveDanmakuList() {
+        this.inDanmakuList = false
+      },
+      showCommentActions(idx) {
+        this.hoverIndex = idx
+      },
+      hideCommentActions(idx) {
+        this.hoverIndex = -1
+      },
+      sendMessage() {
+        if (!this.danmakuContent) {
+          this.$Message.warning('请输入弹幕内容')
+          return
+        }
+        if (!this.danmakuService) {
+          this.$Message.warning('请先开启弹幕姬')
+          return
+        }
+        if (!this.userService) {
+          this.$Message.warning('请先登录')
+          return
+        }
+        this.userService.sendMessage(this.danmakuContent)
+        this.danmakuContent = ''
+        // this.userService.sendMessage(this.danmakuContent).then(res => {
+        //   let msg = JSON.parse(res)
+        //   if (msg.code == 0) {
+        //     if (msg.msg) {
+        //       this.$Message.warning(msg.msg)
+        //     } else {
+        //       this.$Message.success('弹幕发送成功')
+        //       this.danmakuContent = ''
+        //     }
+        //   } else {
+        //     this.$Message.warning(msg.msg)
+        //   }
+        // }, res => {
+        //   this.$Message.error('网络错误')
+        // })
+      },
+      blockUser(uid) {
+        if (!this.userService) {
+          this.$Message.warning('请先登录')
+          return
+        }
+        this.userService.api.blockUser(uid, 720).then(res => {
+          if (res.msg) {
+            this.$Message.error(res.msg)
+          } else {
+            this.$Message.success('成功禁言该用户')
+          }
+        })
+      },
+      setAdmin(uid) {
+        if (!this.userService) {
+          this.$Message.warning('请先登录')
+          return
+        }
+        this.userService.api.setAdmin(uid).then(res => {
+          if (res.msg) {
+            this.$Message.error(res.msg)
+          } else {
+            this.$Message.success('成功任命管理员')
+          }
+        })
+      },
+      renderBlockButton(danmaku) {
+        if (danmaku.type === 'comment') {
+          return [
+            {
+              content: '禁言',
+              style: {background: '#fb7299', color: '#fff'},
+              handler: function () {
+                return this.$messagebox('delete')
+              }
+            }
+          ]
+        } else {
+          return []
+        }
+      }
     }
+
   }
 </script>
 
@@ -183,7 +253,11 @@
     margin-bottom: 180px;
     left: 0;
     right: 0;
-    width: 100%;
+  }
+
+  .danmaku-contain-parent {
+    height: 100%;
+    overflow-y: scroll;
   }
 
   .danmaku-sender {
@@ -285,6 +359,8 @@
     user-select: none;
     cursor: default;
     color: #fff;
+    text-align: left;
+    height: 80%;
   }
 
   .danmaku-box .admin-user {
@@ -457,4 +533,22 @@
   .danmaku-box .failed {
     color: #ed3f14;
   }
+
+  .gift-action {
+    color: #fc84ae;
+  }
+
+  .user-gift {
+    color: #fc84ae;
+  }
+
+  .follow-msg {
+    color: #000000;
+  }
+
+  .welcome-message {
+    color: #000000;
+  }
+
+
 </style>

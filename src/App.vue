@@ -36,4 +36,16 @@
     margin-top: 60px;
     overflow-y: scroll;
   }
+
+  .mint-cell-value {
+    width: 100%;
+  }
+
+  .mint-cell-wrapper {
+    background-color: #f8f8f8;
+  }
+
+  .mint-field-core {
+    background-color: #f8f8f8;
+  }
 </style>

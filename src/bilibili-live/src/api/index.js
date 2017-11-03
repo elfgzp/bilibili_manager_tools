@@ -9,8 +9,8 @@ const BASE_URL = 'localhost:2333/apilivebilibilicom/'
 class Api {
   constructor(config = {}) {
     // this.protocol = config.useHttps ? 'https://' : 'http://'
-    // this.protocol = ''
-    this.protocol = 'http://'
+    this.protocol = ''
+    // this.protocol = 'http://'
 
     this.cookie = config.cookie || ''
     this.roomId = config.roomId || '23058'
@@ -18,8 +18,8 @@ class Api {
 
   useHttps(use) {
     // this.protocol = use ? 'https://' : 'http://'
-    this.protocol = 'http://'
-    // this.protocol = ''
+    // this.protocol = 'http://'
+    this.protocol = ''
   }
 
   setCookie(cookie) {
