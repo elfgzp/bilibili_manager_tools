@@ -61,11 +61,11 @@ export function blockUser(userId, hour) {
 }
 
 // 取消禁言
-export function deleteBlockUser(blockId) {
+export function deleteBlockUser(roomId, blockId) {
   return this.post({
     uri: 'liveact/del_room_block_user',
     body: {
-      roomid: this.roomId,
+      roomid: roomId,
       id: blockId
     }
   }).then(res => {

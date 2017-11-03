@@ -5,10 +5,10 @@
          infinite-scroll-disabled="loading"
          infinite-scroll-distance="10">
       <mt-cell-swipe
-        v-bind:right="renderRemoveBlockButton(user)" v-for="user in blockUserList">
-        <span class="block-user-name">{{user.uname}}</span>
-        <span class="block-info">{{user.block_end_time}}</span>
-        <span class="block-info">{{user.admin_uname}}</span>
+        v-bind:right="renderRemoveBlockButton(blockInfo, index)" v-for="(blockInfo, index) in blockUserList">
+        <span class="block-user-name">{{blockInfo.uname}}</span>
+        <span class="block-info">{{blockInfo.block_end_time}}</span>
+        <span class="block-info">{{blockInfo.admin_uname}}</span>
       </mt-cell-swipe>
       <mt-cell-swipe>
       </mt-cell-swipe>
@@ -66,25 +66,33 @@
           })
         }
       },
-      removeBlock(idx) {
-        let blockID = this.blockList[idx].id
-        this.api.deleteBlockUser(blockID).then(res => {
+      removeBlock(blockInfo, idx) {
+        console.log(blockInfo.uname)
+        let blockID = blockInfo.id
+        var self = this
+        this.userService._api.deleteBlockUser(this.danmakuService.roomId, blockID).then(res => {
           if (res.msg) {
-            this.$Message.error(res.msg)
+            return Toast({
+              message: res.msg,
+              position: 'bottom',
+            })
           } else {
-            this.$Message.success('成功撤销禁言')
+            self.blockUserList.splice(idx, 1)
+            return Toast({
+              message: '成功撤销禁言',
+              position: 'bottom',
+            })
           }
-          this.getBlockList()
         })
       },
-      renderRemoveBlockButton(user) {
+      renderRemoveBlockButton(blockInfo, index) {
         let self = this
         return [
           {
             content: '解除禁言',
             style: {background: '#fb7299', color: '#fff'},
             handler: function () {
-              return self.removeBlock(user.uid)
+              return self.removeBlock(blockInfo, index)
             }
           }
         ]
