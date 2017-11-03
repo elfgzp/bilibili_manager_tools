@@ -203,7 +203,7 @@
         this.userService.api.blockUser(uid, 720).then(res => {
           if (res.msg) {
             return Toast({
-              message: 'res.msg',
+              message: res.msg,
               position: 'bottom',
             })
           } else {
