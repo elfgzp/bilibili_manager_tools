@@ -5,8 +5,9 @@ import store from "./store";
 import App from './App'
 import router from './router'
 import axios from 'axios'
+import { InfiniteScroll } from 'mint-ui';
 
-
+Vue.use(InfiniteScroll);
 Vue.prototype.$http = axios
 Vue.config.productionTip = false
 

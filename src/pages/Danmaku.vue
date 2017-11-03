@@ -60,8 +60,8 @@
       </mt-cell-swipe>
     </div>
     <div class="danmaku-sender">
-      <mt-field>
-        <mt-button class="danmaku-sender-button" type="danger" size="small">
+      <mt-field v-model="danmakuContent">
+        <mt-button class="danmaku-sender-button" type="danger" size="small" @click.native="sendMessage">
           发射
         </mt-button>
       </mt-field>
@@ -70,7 +70,7 @@
 </template>
 
 <script>
-  import {CellSwipe, Button, Field} from 'mint-ui';
+  import {CellSwipe, Button, Field, Toast} from 'mint-ui';
 
   export default {
     components: {
@@ -173,45 +173,44 @@
       },
       sendMessage() {
         if (!this.danmakuContent) {
-          this.$Message.warning('请输入弹幕内容')
-          return
+          return Toast({
+            message: '请输入弹幕内容',
+            position: 'bottom',
+          })
         }
         if (!this.danmakuService) {
-          this.$Message.warning('请先开启弹幕姬')
-          return
+          return Toast({
+            message: '请先开启弹幕姬',
+            position: 'bottom',
+          })
         }
         if (!this.userService) {
-          this.$Message.warning('请先登录')
-          return
+          return Toast({
+            message: '请先登录',
+            position: 'bottom',
+          })
         }
         this.userService.sendMessage(this.danmakuContent)
         this.danmakuContent = ''
-        // this.userService.sendMessage(this.danmakuContent).then(res => {
-        //   let msg = JSON.parse(res)
-        //   if (msg.code == 0) {
-        //     if (msg.msg) {
-        //       this.$Message.warning(msg.msg)
-        //     } else {
-        //       this.$Message.success('弹幕发送成功')
-        //       this.danmakuContent = ''
-        //     }
-        //   } else {
-        //     this.$Message.warning(msg.msg)
-        //   }
-        // }, res => {
-        //   this.$Message.error('网络错误')
-        // })
       },
       blockUser(uid) {
         if (!this.userService) {
-          this.$Message.warning('请先登录')
-          return
+          return Toast({
+            message: '请先登录',
+            position: 'bottom',
+          })
         }
         this.userService.api.blockUser(uid, 720).then(res => {
           if (res.msg) {
-            this.$Message.error(res.msg)
+            return Toast({
+              message: 'res.msg',
+              position: 'bottom',
+            })
           } else {
-            this.$Message.success('成功禁言该用户')
+            return Toast({
+              message: '成功禁言该用户',
+              position: 'bottom',
+            })
           }
         })
       },
@@ -229,13 +228,14 @@
         })
       },
       renderBlockButton(danmaku) {
+        let self = this
         if (danmaku.type === 'comment') {
           return [
             {
               content: '禁言',
               style: {background: '#fb7299', color: '#fff'},
               handler: function () {
-                return this.$messagebox('delete')
+                return self.blockUser(danmaku.user.id)
               }
             }
           ]
@@ -547,6 +547,10 @@
   }
 
   .welcome-message {
+    color: #000000;
+  }
+
+  .block-msg {
     color: #000000;
   }
 

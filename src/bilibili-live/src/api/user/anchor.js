@@ -74,6 +74,21 @@ export function deleteBlockUser(blockId) {
   })
 }
 
+// 获取黑名单
+export function getBlockUserList(roomId, page) {
+  return this.get({
+    uri: 'liveact/ajaxGetBlockList',
+    params: {
+      roomid: roomId,
+      page: page
+    }
+  }).then(res => {
+    let data = JSON.parse(res)
+    if (data.code != 0) return []
+    return data
+  })
+}
+
 // 任命房管
 export function setAdmin(userId) {
   return this.post({

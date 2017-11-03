@@ -22,7 +22,7 @@ export function getUserInfo() {
     } catch(e) {
       return false
     }
-    if (data.code != 0) return false
+    if (data.code != 0) return []
     data = data.data
     return {
       room: {

@@ -1,7 +1,7 @@
 // 发送弹幕
 export function sendMessage(msg, color=0xffffff, mode=1) {
   return this.post({
-    url: 'live.bilibili.com/msg/send',
+    url: 'livebilibilicom/msg/send',
     body: {
       color: Number(Number(color).toString(10)),
       mode,

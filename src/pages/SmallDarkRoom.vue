@@ -1,18 +1,118 @@
 <template>
-  <div>
-    <p>小黑屋页面</p>
+  <div class="blockList-contain">
+    <div class="user-box"
+         v-infinite-scroll="loadMore"
+         infinite-scroll-disabled="loading"
+         infinite-scroll-distance="10">
+      <mt-cell-swipe
+        v-bind:right="renderRemoveBlockButton(user)" v-for="user in blockUserList">
+        <span class="block-user-name">{{user.uname}}</span>
+        <span class="block-info">{{user.block_end_time}}</span>
+        <span class="block-info">{{user.admin_uname}}</span>
+      </mt-cell-swipe>
+      <mt-cell-swipe>
+      </mt-cell-swipe>
+      <mt-cell-swipe>
+      </mt-cell-swipe>
+      <mt-cell-swipe>
+      </mt-cell-swipe>
+    </div>
   </div>
 </template>
 
+
 <script>
+
+  import {CellSwipe, Toast} from 'mint-ui';
+
+
   export default {
+    components: {
+      'mt-cell-swipe': CellSwipe
+    },
     name: 'SmallDarkRoom',
     data() {
-      return {}
+      return {
+        blockUserList: [],
+        page: 0,
+      }
+    },
+    watch: {
+      userService() {
+        this.loadMore()
+      },
+      danmakuService() {
+        this.loadMore()
+      }
+    },
+    computed: {
+      userService() {
+        return this.$store.state.userService
+      },
+      danmakuService() {
+        return this.$store.state.danmakuService
+      },
+    },
+    methods: {
+      loadMore() {
+        this.loading = true;
+        var self = this
+        if (this.userService && this.danmakuService) {
+          return this.userService._api.getBlockUserList(this.danmakuService.roomId, self.page).then(res => {
+            if (res.data.length > 0) {
+              self.blockUserList = Array.prototype.concat(res.data, self.blockUserList)
+              self.page++
+            }
+          })
+        }
+      },
+      removeBlock(idx) {
+        let blockID = this.blockList[idx].id
+        this.api.deleteBlockUser(blockID).then(res => {
+          if (res.msg) {
+            this.$Message.error(res.msg)
+          } else {
+            this.$Message.success('成功撤销禁言')
+          }
+          this.getBlockList()
+        })
+      },
+      renderRemoveBlockButton(user) {
+        let self = this
+        return [
+          {
+            content: '解除禁言',
+            style: {background: '#fb7299', color: '#fff'},
+            handler: function () {
+              return self.removeBlock(user.uid)
+            }
+          }
+        ]
+      }
+
     }
   }
 </script>
 
-<style scoped>
 
+<style scoped>
+  .blockList-contain {
+    height: 100%;
+    margin-bottom: 180px;
+  }
+
+  .user-box {
+    line-height: 24px;
+    padding: 4px 4px;
+    user-select: none;
+    cursor: default;
+    color: #fff;
+    text-align: left;
+    height: 150%;
+    margin-bottom: 180px;
+  }
+
+  .block-info {
+    margin-left: 20px;
+  }
 </style>
