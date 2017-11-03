@@ -91,15 +91,23 @@
           console.log(response);
           Indicator.close();
           if (response.data.success === 1) {
+            self.$store.dispatch({
+              type: 'UPDATE_COOKIE',
+              cookie: response.data.data.cookie
+            })
+            self.$router.go(-1)
+            self.$store.dispatch({
+              type: 'START_USER_SERVICE'
+            })
             return Toast({
-            message: '登录成功',
-            position: 'bottom',
-          });
+              message: '登录成功',
+              position: 'bottom',
+            })
           } else {
             return Toast({
-            message: response.data.msg,
-            position: 'bottom',
-          });
+              message: response.data.msg,
+              position: 'bottom',
+            })
           }
         })
           .catch(function (error) {

@@ -15,7 +15,61 @@
       'app-tabbar': AppTabbar,
       'app-header': AppHeader
     },
-    name: 'app'
+    name: 'app',
+    data() {
+      return {}
+    },
+    computed: {
+      version() {
+        return this.$store.state.version
+      },
+      roomId() {
+        return this.$store.state.roomId
+      },
+      cookie() {
+        return this.$store.state.cookie
+      },
+      userService() {
+        return this.$store.state.userService
+      },
+      danmakuService() {
+        return this.$store.state.danmakuService
+      },
+      userInfo() {
+        return this.$store.state.userInfo
+      },
+      userRoom() {
+        return this.$store.state.userRoom
+      },
+    },
+    watch: {
+      cookie(val) {
+        if (val) {
+          this.loginUser()
+
+        }
+      }
+    },
+    mounted() {
+      if (this.cookie && !this.userService) {
+        this.loginUser()
+      }
+      if (this.roomId && !this.danmakuService){
+        this.startDanmaku()
+      }
+    },
+    methods: {
+      loginUser() {
+        this.$store.dispatch({
+          type: 'START_USER_SERVICE'
+        })
+      },
+      startDanmaku() {
+        this.$store.dispatch({
+          type: 'START_DANMAKU_SERVICE'
+        })
+      }
+    }
   }
 </script>
 
@@ -48,4 +102,6 @@
   .mint-field-core {
     background-color: #f8f8f8;
   }
+
+
 </style>

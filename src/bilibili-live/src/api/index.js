@@ -4,7 +4,7 @@ import {get, post} from '../utils/request.js'
 import RoomApi from './room/index.js'
 import UserApi from './user/index.js'
 
-const BASE_URL = 'localhost:2333/apilivebilibilicom/'
+const BASE_URL = '/apilivebilibilicom/'
 
 class Api {
   constructor(config = {}) {
@@ -33,7 +33,7 @@ class Api {
   get (options) {
     let url = this.protocol + (options.url ? options.url : BASE_URL + options.uri)
     let headers = {
-      'Cookie': this.cookie
+      'Set-Cookie': this.cookie
     }
     let config = {}
     if (!options.html) config.headers = Object.assign(headers, options.headers)
@@ -44,7 +44,7 @@ class Api {
   post(options) {
     let url = this.protocol + (options.url ? options.url : BASE_URL + options.uri)
     let headers = {
-      'Cookie': this.cookie
+      'Set-Cookie': this.cookie
     }
     if (!options.isJson) headers['Content-Type'] = 'application/x-www-form-urlencoded'
     let config = {}

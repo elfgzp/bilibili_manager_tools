@@ -41,14 +41,6 @@ let config = {
   useWebsocket: true,
   useHttps: false,
   useNotification: false,
-  useTTS: false
-}
-
-let ttsConfig = {
-  voice: 0,
-  pitch: 10,
-  rate: 10,
-  volume: 100
 }
 
 let danmakuConfig = {
@@ -64,13 +56,6 @@ if (userConfig) {
     Object.keys(config).forEach((key) => {
       if (userConfig.config.hasOwnProperty(key)) {
         config[key] = userConfig.config[key]
-      }
-    })
-  }
-  if (userConfig.ttsConfig) {
-    Object.keys(ttsConfig).forEach((key) => {
-      if (userConfig.ttsConfig.hasOwnProperty(key)) {
-        ttsConfig[key] = userConfig.ttsConfig[key]
       }
     })
   }
@@ -90,7 +75,6 @@ export default new Vuex.Store({
     roomId,
     cookie,
     config,
-    ttsConfig,
     danmakuConfig,
     userService: null,
     danmakuService: null,
@@ -99,7 +83,22 @@ export default new Vuex.Store({
     onlineNumber: '--',
     fansNumber: '--',
     roomInfo: null,
-    userInfo: null,
+    userInfo: {
+      archives: 0,
+      avatar: "",
+      bcoins: 0,
+      coins: 0,
+      current: 0,
+      gold: "0",
+      id: 0,
+      level: 0,
+      levelRank: 0,
+      name: "正在加载...",
+      next: 0,
+      silver: "0",
+      svip: true,
+      vip: true
+    },
     userRoom: null,
     danmakuPool: [],
     commentPool: [],
@@ -114,7 +113,6 @@ export default new Vuex.Store({
         roomId: state.roomId,
         cookie: state.cookie,
         config: state.config,
-        ttsConfig: state.ttsConfig,
         danmakuConfig: state.danmakuConfig,
         musicConfig: state.musicConfig,
         blockList: state.blockList
@@ -158,9 +156,6 @@ export default new Vuex.Store({
     },
     'SET_CONFIG'(state, payload) {
       state.config = Object.assign({}, payload.config)
-    },
-    'SET_TTS_CONFIG'(state, payload) {
-      state.ttsConfig = Object.assign({}, payload.ttsConfig)
     },
     'SET_DANMAKU_MODE'(state, payload) {
       state.danmakuConfig.mode = payload.mode
@@ -233,10 +228,6 @@ export default new Vuex.Store({
     },
     'UPDATE_CONFIG'({commit, getters}, config) {
       commit('SET_CONFIG', config)
-      localStorage.set('localConfig', JSON.stringify(getters.localData))
-    },
-    'UPDATE_TTS_CONFIG'({commit, getters}, config) {
-      commit('SET_TTS_CONFIG', config)
       localStorage.set('localConfig', JSON.stringify(getters.localData))
     },
     'UPDATE_DANMAKU_MODE'({commit, getters}, mode) {
@@ -367,7 +358,7 @@ export default new Vuex.Store({
 
     },
     'START_USER_SERVICE'({state, commit, dispatch}) {
-      new User({
+      new Live.User({
         cookie: state.cookie,
         useInfoService: true
       }).connect().then(user => {
@@ -380,10 +371,9 @@ export default new Vuex.Store({
           })
           return
         }
-        new API({
+        new Live.API({
           cookie: state.cookie
         }).getUserInfo().then(res => {
-          Statistic.userLogin(state.version, os.platform(), res.user.id, res.room.id)
         })
         user
           .on('info.user', (info) => {

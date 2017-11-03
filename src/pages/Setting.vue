@@ -1,7 +1,8 @@
 <template>
   <div class="setting-contain">
     <div class="setting-button-group">
-      <mt-button class="setting-button" size="large" @click.native="navigaLogin">用户登录</mt-button>
+      <mt-button v-if="!loginStatus" class="setting-button" size="large" @click.native="navigaLogin">用户登录</mt-button>
+      <mt-button v-else class="setting-button" size="large" @click.native="navigauserCenter">个人中心</mt-button>
       <mt-button class="setting-button" size="large" @click.native="navigaBaseSetting">基础设置</mt-button>
     </div>
   </div>
@@ -18,12 +19,24 @@
     data() {
       return {}
     },
+    computed: {
+      loginStatus() {
+        if (this.$store.state.userService) {
+          return true
+        } else {
+          return false
+        }
+      }
+    },
     methods: {
       navigaLogin: function (event) {
         this.$router.push('/Login')
       },
       navigaBaseSetting: function (event) {
         this.$router.push('/BaseSetting')
+      },
+      navigauserCenter: function (event) {
+        this.$router.push('/UserCenter')
       }
     }
   }
