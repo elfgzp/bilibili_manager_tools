@@ -6,8 +6,8 @@
           <a class="user-hd" v-bind:style="{'background-image': userAvatar}"></a>
           <div class="user-info">
 
-            <span title="神奇海螺良良" class="user-name">神奇海螺良良</span>
-            <span class="uid middle">UID</span><span class="user-uid middle">2459271</span>
+            <span v-bind:title="userInfo.name" class="user-name">{{userInfo.name}}</span>
+            <span class="uid middle">UID</span><span class="user-uid middle">{{userInfo.id}}</span>
           </div>
         </div>
         <div class="user-box">
