@@ -60,7 +60,7 @@
         if (this.userService && this.danmakuService) {
           return this.userService._api.getBlockUserList(this.danmakuService.roomId, self.page).then(res => {
             if (res.data.length > 0) {
-              self.blockUserList = Array.prototype.concat(res.data, self.blockUserList)
+              self.blockUserList = Array.prototype.concat(self.blockUserList, res.data)
               self.page++
             }
           })
