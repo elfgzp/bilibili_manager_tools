@@ -2,9 +2,11 @@
   <div>
     <div class="login-contain">
       <sub-header headerTitle="基础设置"></sub-header>
-      <mt-field label="直播间ID:" v-model="roomId" placeholder="请输入直播间ID" @change="startDanmakuService" :state="statusInfo"
+      <mt-field label="直播间号:" v-model="roomId" placeholder="请输入直播间ID" @change="startDanmakuService" :state="statusInfo"
                 type="number">
         <mt-switch v-model="status" ref="statusSwitch"></mt-switch>
+      </mt-field>
+      <mt-field label="弹幕数量:" v-model="maxDanmakuCount" placeholder="请输入弹幕最大显示数量" type="number">
       </mt-field>
     </div>
   </div>
@@ -34,6 +36,17 @@
           this.$store.dispatch({
             type: 'UPDATE_ROOMID',
             roomId: val
+          })
+        }
+      },
+      maxDanmakuCount: {
+        get () {
+          return this.$store.state.danmakuConfig.maxDanmakuCount
+        },
+        set (val) {
+          this.$store.dispatch({
+            type: 'UPDATE_MAX_DANMAKU_COUNT',
+            count: val
           })
         }
       },

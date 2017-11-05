@@ -45,7 +45,8 @@ let config = {
 
 let danmakuConfig = {
   mode: 'scroll',
-  color: 'white'
+  color: 'white',
+  maxDanmakuCount: 100
 }
 
 if (userConfig) {
@@ -123,6 +124,10 @@ export default new Vuex.Store({
     'SET_ROOM_ID'(state, payload) {
       state.roomId = payload.roomId
     },
+    'SET_MAX_DANMAKU_COUNT'(state, payload) {
+      state.danmakuConfig.maxDanmakuCount = payload.count
+      state.danmakuPool.splice(0, payload.count)
+    },
     'UPDATE_LAST_ROOM_ID'(state, payload) {
       state.lastDanmakuServiceRoomID = state.roomId
     },
@@ -199,6 +204,9 @@ export default new Vuex.Store({
       state.roomInfo = null
     },
     'PUSH_DANMAKU_POOL'(state, payload) {
+      if (state.danmakuPool.length > state.danmakuConfig.maxDanmakuCount) {
+        state.danmakuPool = []
+      }
       state.danmakuPool.push(payload.danmaku)
     },
     'PUSH_COMMENT_POOL'(state, payload) {
@@ -220,6 +228,10 @@ export default new Vuex.Store({
   actions: {
     'UPDATE_ROOMID'({commit, getters}, roomId) {
       commit('SET_ROOM_ID', roomId)
+      localStorage.set('localConfig', JSON.stringify(getters.localData))
+    },
+    'UPDATE_MAX_DANMAKU_COUNT'({commit, getters}, count) {
+      commit('SET_MAX_DANMAKU_COUNT', count)
       localStorage.set('localConfig', JSON.stringify(getters.localData))
     },
     'UPDATE_COOKIE'({commit, getters}, cookie) {
