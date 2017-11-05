@@ -1,5 +1,5 @@
 <template>
-  <div class="blockList-contain">
+  <div class="blockList-contain" @onload="loadMore">
     <div class="user-box"
          v-infinite-scroll="loadMore"
          infinite-scroll-disabled="loading"
@@ -36,6 +36,9 @@
         blockUserList: [],
         page: 0,
       }
+    },
+    mounted: function () {
+      this.loadMore()
     },
     watch: {
       userService() {
@@ -117,7 +120,6 @@
     color: #fff;
     text-align: left;
     height: 150%;
-    margin-bottom: 180px;
   }
 
   .block-info {

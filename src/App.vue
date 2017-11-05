@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <app-header></app-header>
-    <router-view></router-view>
+    <router-view class="main-contain"></router-view>
     <app-tabbar></app-tabbar>
   </div>
 </template>
@@ -87,8 +87,13 @@
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     color: #2c3e50;
-    margin-top: 60px;
+    margin-top: 40px;
     overflow-y: scroll;
+  }
+
+  .mint-cell {
+    min-height: 35px;
+    width:  100%;
   }
 
   .mint-cell-value {

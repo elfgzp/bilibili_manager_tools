@@ -3,7 +3,7 @@
       <sub-header headerTitle="个人中心"></sub-header>
       <section class="section-block with-radius with-padding">
         <div class="user">
-          <a class="user-hd" v-bind:style="{'background-image': userAvatar}"></a>
+          <img class="user-hd" v-bind:src="userAvatar"/>
           <div class="user-info">
 
             <span v-bind:title="userInfo.name" class="user-name">{{userInfo.name}}</span>
@@ -40,7 +40,7 @@
         return this.$store.state.userInfo
       },
       userAvatar() {
-        return 'url("' + this.userInfo.avatar + '"'
+        return this.userInfo.avatar
       },
       ulProgress() {
         return Math.floor(this.userInfo.current / this.userInfo.next * 100)

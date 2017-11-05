@@ -59,12 +59,19 @@
         </div>
       </mt-cell-swipe>
     </div>
-    <div class="danmaku-sender">
-      <mt-field v-model="danmakuContent">
-        <mt-button class="danmaku-sender-button" type="danger" size="small" @click.native="sendMessage">
-          发射
-        </mt-button>
-      </mt-field>
+    <div class="danmaku-action">
+      <div class="danmaku-config">
+        <img v-if="lockDanmaku" class="danmaku-lock-button" src="../assets/imgs/lock-danmaku.svg"
+             @click="changeLockDanmaku">
+        <img v-else class="danmaku-unlock-button" src="../assets/imgs/unlock-danmaku.svg" @click="changeLockDanmaku">
+      </div>
+      <div class="danmaku-sender">
+        <mt-field v-model="danmakuContent" class="danmaku-sender-field">
+          <mt-button class="danmaku-sender-button" type="danger" size="small" @click.native="sendMessage">
+            发射
+          </mt-button>
+        </mt-field>
+      </div>
     </div>
   </div>
 </template>
@@ -95,8 +102,12 @@
         },
         inDanmakuList: false,
         hoverIndex: -1,
-        danmakuContent: ''
+        danmakuContent: '',
+        lockDanmaku: false,
       }
+    },
+    mounted: function () {
+      this.$refs.danmakuContainParent.scrollTop = this.$refs.danmakuContainParent.scrollHeight
     },
     computed: {
       danmakuPool() {
@@ -135,11 +146,12 @@
     },
     watch: {
       danmakuPool() {
-        var self = this;
-        this.$nextTick(() => {
-          self.$refs.danmakuContainParent.scrollTop = self.$refs.danmakuContainParent.scrollHeight
-        })
-
+        if (!this.lockDanmaku) {
+          var self = this;
+          this.$nextTick(() => {
+            self.$refs.danmakuContainParent.scrollTop = self.$refs.danmakuContainParent.scrollHeight
+          })
+        }
       }
     },
     methods: {
@@ -158,6 +170,9 @@
       titleImage(source) {
         let uri = source.replace('title-', 'title/')
         return `http://s1.hdslb.com/bfs/static/blive/live-assets/${uri}.png`
+      },
+      changeLockDanmaku() {
+        this.lockDanmaku = !this.lockDanmaku
       },
       enterDanmakuList() {
         this.inDanmakuList = true
@@ -233,7 +248,11 @@
           return [
             {
               content: '禁言',
-              style: {background: '#fb7299', color: '#fff'},
+              style: {
+                'background': '#fb7299',
+                'color': '#fff',
+                'font-size': '12px'
+              },
               handler: function () {
                 return self.blockUser(danmaku.user.id)
               }
@@ -250,7 +269,7 @@
 
 <style scoped>
   .danmaku-contain {
-    margin-bottom: 180px;
+    margin-bottom: 10em;
     left: 0;
     right: 0;
   }
@@ -260,24 +279,44 @@
     overflow-y: scroll;
   }
 
-  .danmaku-sender {
+  .danmaku-action {
     position: fixed;
-    bottom: 55px;
-    margin-bottom: 10px;
+    left: 0;
+    bottom: 54px;
+    z-index: 1;
+    height: 60px;
+    width: 100%;
+  }
+
+  .danmaku-sender {
     left: 0;
     right: 0;
-    height: 40px;
+    height: 65%;
     width: 100%;
-    z-index: 1;
+  }
+
+  .danmaku-config {
+    left: 0;
+    right: 0;
+    height: 35%;
+    width: 100%;
+  }
+
+  .danmaku-lock-button, .danmaku-unlock-button {
+    height: 24px;
+    width: 24px;
+    float: left;
+    margin-left: 10px;
   }
 
   .danmaku-sender-button {
     color: #fff;
     background-color: #fb7299;
     display: inline-block;
-    font-size: 14px;
+    font-size: 12px;
     padding: 0 12px;
-    height: 33px;
+    height: 30px;
+    width: 50px;
   }
 
   * {
@@ -354,7 +393,8 @@
   }
 
   .danmaku-box {
-    line-height: 24px;
+    font-size: 12px;
+    line-height: 16px;
     padding: 4px 4px;
     user-select: none;
     cursor: default;
@@ -511,11 +551,11 @@
 
   .danmaku-box .guard-user-gift {
     display: inline-block;
-    width: 32px;
-    height: 32px;
+    width: 24px;
+    height: 24px;
     vertical-align: bottom;
     background-image: url("http://static.hdslb.com/live-static/live-room/images/guard/icon-guard-big.png");
-    background-size: auto 32px;
+    background-size: auto 24px;
   }
 
   .danmaku-box .msg-gift .gift-img > img {
