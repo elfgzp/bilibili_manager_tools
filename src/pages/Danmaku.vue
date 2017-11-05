@@ -282,7 +282,7 @@
   .danmaku-action {
     position: fixed;
     left: 0;
-    bottom: 54px;
+    bottom: 65px;
     z-index: 1;
     height: 60px;
     width: 100%;
