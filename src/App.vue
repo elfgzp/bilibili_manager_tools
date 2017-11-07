@@ -100,6 +100,10 @@
     width: 100%;
   }
 
+  .mint-cell-text {
+    font-size: 12px;
+  }
+
   .mint-cell-wrapper {
     background-color: #f8f8f8;
   }

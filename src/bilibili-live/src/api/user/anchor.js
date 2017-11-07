@@ -1,3 +1,5 @@
+const API_LIVE_BASE_URL = '/apilivebilibilicom'
+
 // 切换直播间状态 1 -> 开启 0 -> 关闭
 export function toggleLiveRoom(status, area) {
   let body = {
@@ -8,7 +10,7 @@ export function toggleLiveRoom(status, area) {
     body.area_v2 = area
   }
   return this.post({
-    uri: 'liveact/live_status_mng',
+    url: `${API_LIVE_BASE_URL}/live_status_mng`,
     body
   }).then(res => {
     let data = JSON.parse(res)
@@ -19,7 +21,7 @@ export function toggleLiveRoom(status, area) {
 // 获取直播分区列表
 export function getAreaList() {
   return this.get({
-    uri: '/room/v1/Area/getList',
+    url: `${API_LIVE_BASE_URL}/room/v1/Area/getList`,
   }).then(res => {
     let data = JSON.parse(res).data
     return data
@@ -29,7 +31,7 @@ export function getAreaList() {
 // 获取直播间推流码
 export function getRoomRTMP() {
   return this.post({
-    uri: 'liveact/getrtmp',
+    url: `${API_LIVE_BASE_URL}/liveact/getrtmp`,
     body: {
       roomid: this.roomId
     }
@@ -47,7 +49,7 @@ export function getRoomRTMP() {
 // 禁言用户
 export function blockUser(userId, hour) {
   return this.post({
-    uri: 'liveact/room_block_user',
+    url: `${API_LIVE_BASE_URL}/liveact/room_block_user`,
     body: {
       roomid: this.roomId,
       content: userId,
@@ -63,7 +65,7 @@ export function blockUser(userId, hour) {
 // 取消禁言
 export function deleteBlockUser(roomId, blockId) {
   return this.post({
-    uri: 'liveact/del_room_block_user',
+    url: `${API_LIVE_BASE_URL}/liveact/del_room_block_user`,
     body: {
       roomid: roomId,
       id: blockId
@@ -77,7 +79,7 @@ export function deleteBlockUser(roomId, blockId) {
 // 获取黑名单
 export function getBlockUserList(roomId, page) {
   return this.get({
-    uri: 'liveact/ajaxGetBlockList',
+    url: `${API_LIVE_BASE_URL}/liveact/ajaxGetBlockList`,
     params: {
       roomid: roomId,
       page: page
@@ -92,7 +94,7 @@ export function getBlockUserList(roomId, page) {
 // 任命房管
 export function setAdmin(userId) {
   return this.post({
-    uri: 'liveact/admin',
+    url: `${API_LIVE_BASE_URL}/liveact/admin`,
     body: {
       content: userId,
       roomid: this.roomId,
@@ -107,7 +109,7 @@ export function setAdmin(userId) {
 // 取消房管
 export function deleteAdmin(userId) {
   return this.post({
-    uri: 'liveact/admin',
+    url: `${API_LIVE_BASE_URL}/liveact/admin`,
     body: {
       content: userId,
       roomid: this.roomId,

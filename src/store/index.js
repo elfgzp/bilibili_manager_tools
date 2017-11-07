@@ -126,7 +126,9 @@ export default new Vuex.Store({
     },
     'SET_MAX_DANMAKU_COUNT'(state, payload) {
       state.danmakuConfig.maxDanmakuCount = payload.count
-      state.danmakuPool.splice(0, payload.count)
+      if (state.danmakuPool.length > payload.count) {
+          state.danmakuPool.splice(state.danmakuConfig.maxDanmakuCount - state.danmakuPool.length)
+      }
     },
     'UPDATE_LAST_ROOM_ID'(state, payload) {
       state.lastDanmakuServiceRoomID = state.roomId
@@ -204,10 +206,10 @@ export default new Vuex.Store({
       state.roomInfo = null
     },
     'PUSH_DANMAKU_POOL'(state, payload) {
-      if (state.danmakuPool.length > state.danmakuConfig.maxDanmakuCount) {
-        state.danmakuPool = []
-      }
       state.danmakuPool.push(payload.danmaku)
+      if (state.danmakuPool.length > 0 && state.danmakuPool.length > state.danmakuConfig.maxDanmakuCount) {
+        state.danmakuPool.splice(0, 1)
+      }
     },
     'PUSH_COMMENT_POOL'(state, payload) {
       state.commentPool.push(payload.danmaku)
@@ -341,6 +343,14 @@ export default new Vuex.Store({
               danmaku: fans
             })
           })
+        if (state.danmakuPool.length === 0) {
+          room._api.getRoomMessage().then(res => {
+            state.danmakuPool = res || []
+            if (state.danmakuPool.length > state.danmakuConfig.maxDanmakuCount) {
+              state.danmakuPool.splice(state.danmakuConfig.maxDanmakuCount - state.danmakuPool.length)
+            }
+          })
+        }
         if (state.userService) {
           state.userService.setRoomId(room.roomId)
         }

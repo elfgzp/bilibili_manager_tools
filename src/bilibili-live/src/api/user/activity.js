@@ -1,7 +1,10 @@
+const API_LIVE_BASE_URL = '/apilivebilibilicom'
+
+
 // 参与小电视抽奖
 export function joinSmallTV(roomId, tvId) {
   return this.get({
-    uri: 'SmallTV/join',
+    url: `${API_LIVE_BASE_URL}/SmallTV/join`,
     params: {
       roomId: roomId,
       id: tvId,
@@ -16,7 +19,7 @@ export function joinSmallTV(roomId, tvId) {
 // 查看小电视抽奖奖励
 export function getSmallTVReward(tvId) {
   return this.get({
-    uri: 'SmallTV/getReward',
+    url: `${API_LIVE_BASE_URL}/SmallTV/getReward`,
     params: {
       id: tvId,
       _: new Date().getTime()

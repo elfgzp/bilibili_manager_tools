@@ -46,7 +46,7 @@
         set (val) {
           this.$store.dispatch({
             type: 'UPDATE_MAX_DANMAKU_COUNT',
-            count: val
+            count: val ? parseInt(val) : 1
           })
         }
       },

@@ -1,8 +1,7 @@
 <template>
   <div class="danmaku-contain-parent" ref="danmakuContainParent">
     <div class="danmaku-contain" ref="danmakuContain">
-      <mt-cell-swipe v-for="(danmaku, index) in danmakuPool" v-bind:right="renderBlockButton(danmaku)">
-
+      <mt-cell v-for="(danmaku, index) in danmakuPool">
         <div class="danmaku-box">
           <div v-if="danmaku.type == 'connected'" class="msg-connected">弹幕服务器连接成功...</div>
           <div v-else-if="danmaku.type == 'error'" class="msg-error">连接发生错误，3秒后自动重连...</div>
@@ -19,7 +18,7 @@
             <span class="user-name">{{ danmaku.user.name }}</span>
             <span class="welcome-message">进入直播间</span>
           </div>
-          <div v-else-if="danmaku.type == 'comment'" class="msg-comment"
+          <div v-else-if="danmaku.type == 'comment'" class="msg-comment" @click="blockUserSheet(danmaku.user)"
           >
             <span v-if="danmaku.user.guard > 0" class="guard-user" :class="userGuardLevel(danmaku.user.guard)"></span>
             <span v-if="danmaku.user.isAdmin" class="admin-user">管</span>
@@ -57,7 +56,7 @@
             <span class="follow-msg">关注了直播间</span>
           </div>
         </div>
-      </mt-cell-swipe>
+      </mt-cell>
     </div>
     <div class="danmaku-action">
       <div class="danmaku-config">
@@ -66,24 +65,26 @@
         <img v-else class="danmaku-unlock-button" src="../assets/imgs/unlock-danmaku.svg" @click="changeLockDanmaku">
       </div>
       <div class="danmaku-sender">
-        <mt-field v-model="danmakuContent" class="danmaku-sender-field">
+        <mt-field v-model="danmakuContent" class="danmaku-sender-field" placeholder="">
           <mt-button class="danmaku-sender-button" type="danger" size="small" @click.native="sendMessage">
             发射
           </mt-button>
         </mt-field>
       </div>
     </div>
+    <mt-actionsheet :actions="blockUserSheetActions" v-model="blockSheetVisible"></mt-actionsheet>
   </div>
 </template>
 
 <script>
-  import {CellSwipe, Button, Field, Toast} from 'mint-ui';
+  import {Cell, Button, Field, Toast, Actionsheet} from 'mint-ui';
 
   export default {
     components: {
-      'mt-cell-swipe': CellSwipe,
+      'mt-cell': Cell,
       'mt-button': Button,
-      'mt-field': Field
+      'mt-field': Field,
+      'mt-actionsheet': Actionsheet
     },
     name: 'Danmaku',
     data() {
@@ -104,6 +105,9 @@
         hoverIndex: -1,
         danmakuContent: '',
         lockDanmaku: false,
+        blockSheetVisible: false,
+        blockUid: 0,
+        blockUserName: ''
       }
     },
     mounted: function () {
@@ -115,11 +119,23 @@
           return this.config[msg.type + 'Message']
         })
       },
+      maxDanmakuCount() {
+        return parseInt(this.$store.state.danmakuConfig.maxDanmakuCount)
+      },
       userService() {
         return this.$store.state.userService
       },
       danmakuService() {
         return this.$store.state.danmakuService
+      },
+      blockUserSheetActions() {
+        return [{
+          name: '用户: ' + this.blockUserName
+        },
+          {
+            name: '禁言',
+            method: this.blockUser
+          }]
       },
       danmakuMode: {
         get () {
@@ -142,12 +158,12 @@
             color: val
           })
         }
-      }
+      },
     },
     watch: {
       danmakuPool() {
+        var self = this;
         if (!this.lockDanmaku) {
-          var self = this;
           this.$nextTick(() => {
             self.$refs.danmakuContainParent.scrollTop = self.$refs.danmakuContainParent.scrollHeight
           })
@@ -174,18 +190,6 @@
       changeLockDanmaku() {
         this.lockDanmaku = !this.lockDanmaku
       },
-      enterDanmakuList() {
-        this.inDanmakuList = true
-      },
-      leaveDanmakuList() {
-        this.inDanmakuList = false
-      },
-      showCommentActions(idx) {
-        this.hoverIndex = idx
-      },
-      hideCommentActions(idx) {
-        this.hoverIndex = -1
-      },
       sendMessage() {
         if (!this.danmakuContent) {
           return Toast({
@@ -208,7 +212,13 @@
         this.userService.sendMessage(this.danmakuContent)
         this.danmakuContent = ''
       },
-      blockUser(uid) {
+      blockUserSheet(user) {
+        this.blockUid = user.id
+        this.blockUserName = user.name
+        this.blockSheetVisible = true
+      },
+      blockUser() {
+        let uid = this.blockUid
         if (!this.userService) {
           return Toast({
             message: '请先登录',
@@ -241,26 +251,6 @@
             this.$Message.success('成功任命管理员')
           }
         })
-      },
-      renderBlockButton(danmaku) {
-        let self = this
-        if (danmaku.type === 'comment') {
-          return [
-            {
-              content: '禁言',
-              style: {
-                'background': '#fb7299',
-                'color': '#fff',
-                'font-size': '12px'
-              },
-              handler: function () {
-                return self.blockUser(danmaku.user.id)
-              }
-            }
-          ]
-        } else {
-          return []
-        }
       }
     }
 
@@ -282,9 +272,9 @@
   .danmaku-action {
     position: fixed;
     left: 0;
-    bottom: 65px;
+    bottom: 60px;
     z-index: 1;
-    height: 60px;
+    height: 58px;
     width: 100%;
   }
 
@@ -293,6 +283,16 @@
     right: 0;
     height: 65%;
     width: 100%;
+  }
+
+  .danmaku-sender-field {
+    background-color: #f4f4f4;
+    border: 1px solid #e3e3e3;
+    border-radius: .533333333333333rem;
+    font-size: .32rem;
+    line-height: .8rem;
+    color: #999;
+    height: 100%;
   }
 
   .danmaku-config {

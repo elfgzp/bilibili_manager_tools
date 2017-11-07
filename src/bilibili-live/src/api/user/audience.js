@@ -1,7 +1,11 @@
+const API_LIVE_BASE_URL = '/apilivebilibilicom'
+const LIVE_BASE_URL = '/livebilibilicom'
+
+
 // 发送弹幕
 export function sendMessage(msg, color=0xffffff, mode=1) {
   return this.post({
-    url: 'livebilibilicom/msg/send',
+    url: `${LIVE_BASE_URL}/msg/send`,
     body: {
       color: Number(Number(color).toString(10)),
       mode,
@@ -15,7 +19,7 @@ export function sendMessage(msg, color=0xffffff, mode=1) {
 // 发送在线心跳
 export function sendHeartbeat() {
   return this.post({
-    uri: 'User/userOnlineHeart',
+    url: `${API_LIVE_BASE_URL}/User/userOnlineHeart`,
     headers: {
       'Content-Type': 'text/html; charset=UTF-8',
       'Host': 'api.live.bilibili.com',
@@ -29,7 +33,7 @@ export function sendHeartbeat() {
 // 发送在线礼物心跳
 export function sendEventHeartbeat() {
   return this.get({
-    uri: 'eventRoom/heart',
+    url: `${API_LIVE_BASE_URL}/eventRoom/heart`,
     params: {
       roomid: this.roomId
     }
@@ -39,7 +43,7 @@ export function sendEventHeartbeat() {
 // 每日签到
 export function dailySign() {
   return this.get({
-    uri: 'sign/doSign'
+    url: `${API_LIVE_BASE_URL}/sign/doSign`
   }).then(res => {
     let data = JSON.parse(res)
     return data

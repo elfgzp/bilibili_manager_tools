@@ -1,7 +1,9 @@
+const API_LIVE_BASE_URL = '/apilivebilibilicom'
+
 // 检查cookie是否过期
 export function checkUserLogin() {
   return this.post({
-    uri: 'User/getUserInfo'
+    url: `${API_LIVE_BASE_URL}/User/getUserInfo`
   }).then(res => {
     let data = JSON.parse(res)
     if (data.code == 'REPONSE_OK') {
@@ -14,7 +16,7 @@ export function checkUserLogin() {
 // 获取用户基本信息
 export function getUserInfo() {
   return this.post({
-    uri: 'i/api/liveinfo'
+    url: `${API_LIVE_BASE_URL}/i/api/liveinfo`
   }).then(res => {
     let data
     try {
