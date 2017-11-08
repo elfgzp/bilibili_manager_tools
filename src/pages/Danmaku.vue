@@ -59,14 +59,15 @@
         </div>
       </mt-cell>
     </div>
-    <div class="danmaku-action">
+    <div class="danmaku-action" ref="danmakuAction">
       <div class="danmaku-config">
         <img v-if="lockDanmaku" class="danmaku-lock-button" src="../assets/imgs/lock-danmaku.svg"
              @click="changeLockDanmaku">
         <img v-else class="danmaku-unlock-button" src="../assets/imgs/unlock-danmaku.svg" @click="changeLockDanmaku">
       </div>
       <div class="danmaku-sender">
-        <mt-field v-model="danmakuContent" class="danmaku-sender-field" placeholder="请输入要发送的弹幕">
+        <mt-field v-model="danmakuContent" class="danmaku-sender-field" placeholder="请输入要发送的弹幕"
+                  v-focas="focasSendField" v-blur="blurSendField">
           <mt-button class="danmaku-sender-button" type="danger" size="small" @click.native="sendMessage">
             发射
           </mt-button>
@@ -170,6 +171,17 @@
             state: val
           })
         }
+      },
+      tabbarVisible: {
+        get () {
+          return this.$store.state.tabbarVisible
+        },
+        set (val) {
+          this.$store.dispatch({
+            type: 'UPDATE_TABBAR_VISIBLE',
+            state: val
+          })
+        }
       }
     },
     watch: {
@@ -183,6 +195,17 @@
       },
     },
     methods: {
+      focasSendField() {
+        this.$refs.danmakuAction.style.bottom = '5px'
+        this.changeTabbarVisible()
+      },
+      blurSendField() {
+        this.$refs.danmakuAction.style.bottom = '60px'
+        this.changeTabbarVisible()
+      },
+      changeTabbarVisible() {
+        this.tabbarVisible = !this.tabbarVisible
+      },
       changeLockDanmaku() {
         this.lockDanmaku = !this.lockDanmaku
       },
@@ -430,6 +453,7 @@
     color: #fff;
     text-align: left;
     height: 80%;
+    width: 100%;
   }
 
   .danmaku-box .admin-user {
@@ -623,5 +647,7 @@
     color: #000000;
   }
 
-
+  .msg-comment {
+    width: 100%;
+  }
 </style>

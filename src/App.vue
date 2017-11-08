@@ -2,7 +2,7 @@
   <div id="app">
     <app-header></app-header>
     <router-view class="main-contain"></router-view>
-    <app-tabbar></app-tabbar>
+    <app-tabbar v-if="tabbarVisible"></app-tabbar>
   </div>
 </template>
 
@@ -20,6 +20,9 @@
       return {}
     },
     computed: {
+      tabbarVisible () {
+        return this.$store.state.tabbarVisible
+      },
       version() {
         return this.$store.state.version
       },

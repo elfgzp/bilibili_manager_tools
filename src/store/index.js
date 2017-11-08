@@ -107,7 +107,8 @@ export default new Vuex.Store({
     giftPool: [],
     onlinePool: [],
     fansPool: [],
-    areaList: []
+    areaList: [],
+    tabbarVisible: true
   },
   getters: {
     localData(state) {
@@ -124,6 +125,9 @@ export default new Vuex.Store({
   mutations: {
     'SET_ROOM_ID'(state, payload) {
       state.roomId = payload.roomId
+    },
+    'SET_TABBAR_VISIBLE'(state, payload) {
+      state.tabbarVisible = payload.state
     },
     'SET_MAX_DANMAKU_COUNT'(state, payload) {
       state.danmakuConfig.maxDanmakuCount = payload.count
@@ -447,6 +451,9 @@ export default new Vuex.Store({
           areaList: res
         })
       })
+    },
+    'UPDATE_TABBAR_VISIBLE'({commit, getters}, state) {
+      commit('SET_TABBAR_VISIBLE', state)
     }
   }
 
