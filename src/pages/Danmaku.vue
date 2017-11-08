@@ -196,11 +196,11 @@
     },
     methods: {
       focasSendField() {
-        this.$refs.danmakuAction.style.bottom = '5px'
+        this.$refs.danmakuAction.style.bottom = '10px'
         this.changeTabbarVisible()
       },
       blurSendField() {
-        this.$refs.danmakuAction.style.bottom = '60px'
+        this.$refs.danmakuAction.style.bottom = '65px'
         this.changeTabbarVisible()
       },
       changeTabbarVisible() {
@@ -324,7 +324,7 @@
   .danmaku-action {
     position: fixed;
     left: 0;
-    bottom: 60px;
+    bottom: 65px;
     z-index: 1;
     height: 58px;
     width: 100%;
