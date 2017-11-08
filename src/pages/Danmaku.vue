@@ -1,6 +1,7 @@
 <template>
   <div class="danmaku-contain-parent" ref="danmakuContainParent">
-    <div class="danmaku-contain" ref="danmakuContain">
+    <div class="danmaku-contain" ref="danmakuContain" @touchstart="danmakuContainTouchStart"
+         @touchmove="danmakuContainTouchMove">
       <mt-cell v-for="(danmaku, index) in danmakuPool">
         <div class="danmaku-box">
           <div v-if="danmaku.type == 'connected'" class="msg-connected">弹幕服务器连接成功...</div>
@@ -65,7 +66,7 @@
         <img v-else class="danmaku-unlock-button" src="../assets/imgs/unlock-danmaku.svg" @click="changeLockDanmaku">
       </div>
       <div class="danmaku-sender">
-        <mt-field v-model="danmakuContent" class="danmaku-sender-field" placeholder="">
+        <mt-field v-model="danmakuContent" class="danmaku-sender-field" placeholder="请输入要发送的弹幕">
           <mt-button class="danmaku-sender-button" type="danger" size="small" @click.native="sendMessage">
             发射
           </mt-button>
@@ -104,10 +105,10 @@
         inDanmakuList: false,
         hoverIndex: -1,
         danmakuContent: '',
-        lockDanmaku: false,
         blockSheetVisible: false,
         blockUid: 0,
-        blockUserName: ''
+        blockUserName: '',
+        touchStartY: 0
       }
     },
     mounted: function () {
@@ -159,6 +160,17 @@
           })
         }
       },
+      lockDanmaku: {
+        get () {
+          return this.$store.state.danmakuLockState
+        },
+        set (val) {
+          this.$store.dispatch({
+            type: 'UPDATE_DANMAKU_LOCK_STATE',
+            state: val
+          })
+        }
+      }
     },
     watch: {
       danmakuPool() {
@@ -168,9 +180,29 @@
             self.$refs.danmakuContainParent.scrollTop = self.$refs.danmakuContainParent.scrollHeight
           })
         }
-      }
+      },
     },
     methods: {
+      changeLockDanmaku() {
+        this.lockDanmaku = !this.lockDanmaku
+      },
+      danmakuContainTouchStart(event) {
+        this.touchStartY = event.changedTouches[0].pageY
+        if (this.$refs.danmakuContainParent.offsetHeight + this.$refs.danmakuContainParent.scrollTop === this.$refs.danmakuContainParent.scrollHeight) {
+          this.lockDanmaku = false
+        }
+      },
+      danmakuContainTouchMove(event) {
+        let touchMoveEndY = event.changedTouches[0].pageY
+        let Y = touchMoveEndY - this.touchStartY
+
+        if (Y > 0) {
+          this.lockDanmaku = true
+        }
+        if (this.$refs.danmakuContainParent.offsetHeight + this.$refs.danmakuContainParent.scrollTop === this.$refs.danmakuContainParent.scrollHeight) {
+          this.lockDanmaku = false
+        }
+      },
       userLevelColor(level) {
         return "user-level-" + Math.ceil(Number(level) / 10)
       },
@@ -186,9 +218,6 @@
       titleImage(source) {
         let uri = source.replace('title-', 'title/')
         return `http://s1.hdslb.com/bfs/static/blive/live-assets/${uri}.png`
-      },
-      changeLockDanmaku() {
-        this.lockDanmaku = !this.lockDanmaku
       },
       sendMessage() {
         if (!this.danmakuContent) {

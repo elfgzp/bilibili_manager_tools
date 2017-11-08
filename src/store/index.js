@@ -79,6 +79,7 @@ export default new Vuex.Store({
     danmakuConfig,
     userService: null,
     danmakuService: null,
+    danmakuLockState: false,
     danmakuServiceStatus: 'close',
     lastDanmakuServiceRoomID: '',
     onlineNumber: '--',
@@ -127,7 +128,7 @@ export default new Vuex.Store({
     'SET_MAX_DANMAKU_COUNT'(state, payload) {
       state.danmakuConfig.maxDanmakuCount = payload.count
       if (state.danmakuPool.length > payload.count) {
-          state.danmakuPool.splice(state.danmakuConfig.maxDanmakuCount - state.danmakuPool.length)
+        state.danmakuPool.splice(state.danmakuConfig.maxDanmakuCount - state.danmakuPool.length)
       }
     },
     'UPDATE_LAST_ROOM_ID'(state, payload) {
@@ -205,9 +206,15 @@ export default new Vuex.Store({
       state.fansPool = []
       state.roomInfo = null
     },
+    'SET_DANMAKU_LOCK_STATE'(state, payload) {
+      state.danmakuLockState = payload.state
+      if (state.danmakuPool.length > payload.count) {
+        state.danmakuPool.splice(state.danmakuConfig.maxDanmakuCount - state.danmakuPool.length)
+      }
+    },
     'PUSH_DANMAKU_POOL'(state, payload) {
       state.danmakuPool.push(payload.danmaku)
-      if (state.danmakuPool.length > 0 && state.danmakuPool.length > state.danmakuConfig.maxDanmakuCount) {
+      if (!state.danmakuLockState && state.danmakuPool.length > 0 && state.danmakuPool.length > state.danmakuConfig.maxDanmakuCount) {
         state.danmakuPool.splice(0, 1)
       }
     },
@@ -251,6 +258,9 @@ export default new Vuex.Store({
     'UPDATE_DANMAKU_COLOR'({commit, getters}, color) {
       commit('SET_DANMAKU_COLOR', color)
       localStorage.set('localConfig', JSON.stringify(getters.localData))
+    },
+    'UPDATE_DANMAKU_LOCK_STATE'({commit, getters}, state) {
+      commit('SET_DANMAKU_LOCK_STATE', state)
     },
     'START_DANMAKU_SERVICE'({state, commit, dispatch}) {
       clearTimeout(restartService)
