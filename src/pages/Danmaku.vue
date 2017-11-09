@@ -75,6 +75,7 @@
       </div>
     </div>
     <mt-actionsheet :actions="blockUserSheetActions" v-model="blockSheetVisible"></mt-actionsheet>
+    <mt-actionsheet :actions="customDanmakuSheetActions" v-model="customDanmakuSheetVisible"></mt-actionsheet>
   </div>
 </template>
 
@@ -109,7 +110,8 @@
         blockSheetVisible: false,
         blockUid: 0,
         blockUserName: '',
-        touchStartY: 0
+        touchStartY: 0,
+        customDanmakuSheetVisible: false
       }
     },
     mounted: function () {
@@ -138,6 +140,12 @@
             name: '禁言',
             method: this.blockUser
           }]
+      },
+      customDanmakuSheetActions (){
+        return [{
+          name: '发送自定义弹幕',
+          method: this.toCustomDanmakuPage
+        }]
       },
       danmakuMode: {
         get () {
@@ -200,7 +208,7 @@
         this.changeTabbarVisible()
       },
       blurSendField() {
-        this.$refs.danmakuAction.style.bottom = '65px'
+        this.$refs.danmakuAction.style.bottom = '68px'
         this.changeTabbarVisible()
       },
       changeTabbarVisible() {
@@ -244,10 +252,7 @@
       },
       sendMessage() {
         if (!this.danmakuContent) {
-          return Toast({
-            message: '请输入弹幕内容',
-            position: 'bottom',
-          })
+          this.customDanmakuSheetVisible = true
         }
         if (!this.danmakuService) {
           return Toast({
@@ -303,7 +308,10 @@
             this.$Message.success('成功任命管理员')
           }
         })
-      }
+      },
+      toCustomDanmakuPage(){
+         this.$router.push('/CustomDanmaku')
+      },
     }
 
   }
@@ -324,7 +332,7 @@
   .danmaku-action {
     position: fixed;
     left: 0;
-    bottom: 65px;
+    bottom: 68px;
     z-index: 1;
     height: 58px;
     width: 100%;

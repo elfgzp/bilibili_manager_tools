@@ -49,10 +49,13 @@ let danmakuConfig = {
   maxDanmakuCount: 100
 }
 
+let customDanmakuList = []
+
 if (userConfig) {
   roomId = userConfig.roomId || ''
   cookie = userConfig.cookie || ''
   blockList = userConfig.blockList || []
+  customDanmakuList = userConfig.customDanmakuList || []
   if (userConfig.config) {
     Object.keys(config).forEach((key) => {
       if (userConfig.config.hasOwnProperty(key)) {
@@ -108,7 +111,8 @@ export default new Vuex.Store({
     onlinePool: [],
     fansPool: [],
     areaList: [],
-    tabbarVisible: true
+    tabbarVisible: true,
+    customDanmakuList: customDanmakuList
   },
   getters: {
     localData(state) {
@@ -117,8 +121,8 @@ export default new Vuex.Store({
         cookie: state.cookie,
         config: state.config,
         danmakuConfig: state.danmakuConfig,
-        musicConfig: state.musicConfig,
-        blockList: state.blockList
+        blockList: state.blockList,
+        customDanmakuList: state.customDanmakuList
       }
     }
   },
@@ -187,9 +191,6 @@ export default new Vuex.Store({
         })
       }
     },
-    'SET_MUSIC_CONFIG'(state, payload) {
-      state.musicConfig = Object.assign({}, payload.musicConfig)
-    },
     'SET_DANMAKU_SERVICE_STATUS'(state, payload) {
       state.danmakuServiceStatus = payload.status
     },
@@ -236,6 +237,15 @@ export default new Vuex.Store({
     },
     'SET_AREA_LIST'(state, payload) {
       state.areaList = payload.areaList
+    },
+    'ADD_CUSTOM_DANMAKU'(state, payload) {
+      state.customDanmakuList.push(payload.danmaku)
+    },
+    'DELETE_CUSTOM_DANMAKU'(state, payload) {
+       state.customDanmakuList.splice(payload.index, 1)
+    },
+    'UPDATE_CUSTOM_DANMAKU'(state, payload){
+      state.customDanmakuList[payload.index] = payload.danmaku
     }
   },
   actions: {
@@ -454,6 +464,18 @@ export default new Vuex.Store({
     },
     'UPDATE_TABBAR_VISIBLE'({commit, getters}, state) {
       commit('SET_TABBAR_VISIBLE', state)
+    },
+    'ADD_CUSTOM_DANMAKU'({commit, getters}, danmaku){
+      commit('ADD_CUSTOM_DANMAKU', danmaku)
+      localStorage.set('localConfig', JSON.stringify(getters.localData))
+    },
+    'DELETE_CUSTOM_DANMAKU'({commit, getters}, danmaku){
+      commit('DELETE_CUSTOM_DANMAKU', danmaku)
+      localStorage.set('localConfig', JSON.stringify(getters.localData))
+    },
+    'UPDATE_CUSTOM_DANMAKU'({commit, getters}, danmaku){
+      commit('UPDATE_CUSTOM_DANMAKU', danmaku)
+      localStorage.set('localConfig', JSON.stringify(getters.localData))
     }
   }
 
