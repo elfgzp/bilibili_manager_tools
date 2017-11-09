@@ -38,7 +38,7 @@
     data() {
       return {
         blockUserList: [],
-        page: 0,
+        page: 1,
         unBlockSheetVisible: false,
         unBlockId: 0,
         unBlockIndex: 0,
