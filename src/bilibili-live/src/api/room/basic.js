@@ -23,9 +23,10 @@ export function getRoomBaseInfo(roomUrl) {
 // 获取直播间信息
 export function getRoomInfo() {
   return this.get({
-    url: `${LIVE_BASE_URL}/live/getInfo`,
+    url: `${API_LIVE_BASE_URL}/room/v1/Room/get_info`,
     params: {
-      roomid: this.roomId
+      roomid: this.roomId,
+      from: 'room'
     }
   }).then(res => {
     let data = JSON.parse(res).data
